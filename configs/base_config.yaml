@@ -1,0 +1,58 @@
+# Base configuration shared across all models
+# Override values in model-specific configs
+
+# --- Data ---
+data:
+  image_dir: "data/images"          # path to segmented ROI images (update before running)
+  metadata_csv: "data/metadata.csv" # path to metadata CSV (update before running)
+  image_col: "filename"             # column name for image file names
+  label_col: "age"                  # column name for labels (int → classification, float → regression)
+  metadata_cols: []                 # list of extra numeric metadata columns; empty = no metadata
+  val_split: 0.15                   # fraction of each fold's train data used for validation
+  n_folds: 3                        # number of cross-validation folds
+  seed: 42
+
+# --- Training ---
+training:
+  epochs: 50
+  batch_size: 16
+  learning_rate: 0.0001
+  weight_decay: 0.0001
+  early_stopping_patience: 10
+  mixed_precision: true
+  deterministic: true
+  num_workers: 4
+  pin_memory: true
+
+# --- Scheduler ---
+scheduler:
+  name: "cosine"                    # options: cosine, step, plateau, none
+  warmup_epochs: 2
+  min_lr: 0.000001
+  step_size: 10                     # for StepLR
+  gamma: 0.5                        # for StepLR / ReduceLROnPlateau
+
+# --- Loss ---
+loss:
+  regression: "mse"                 # options: mse, mae, huber
+  classification: "crossentropy"
+
+# --- Task ---
+task:
+  type: "regression"                # options: regression, classification
+  num_classes: 1                    # used only for classification
+
+# --- Model ---
+model:
+  name: "base"
+  input_size: 224
+  pretrained: true
+  dropout: 0.3
+  metadata_enabled: false
+
+# --- Logging ---
+logging:
+  log_dir: "runs"
+  experiment_dir: "experiments"
+  results_dir: "results"
+  save_best_only: true
